@@ -22,7 +22,6 @@ app.get("/getHome", async (req: Request, res: Response) => {
     featured: featuredRestaurants.data,
     restaurants: allRestaurants.data,
   };
-  console.log(home);
   res.json(home);
 });
 
