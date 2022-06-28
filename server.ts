@@ -1,4 +1,4 @@
-import express, { Application, Request, response, Response } from "express";
+import express, { Application, Request, Response } from "express";
 import axios from "axios";
 const cors = require("cors");
 const bodyParser = require('body-parser');
@@ -34,8 +34,20 @@ app.get("/getRestaurant/:name", async (req: Request, res: Response) => {
   res.json(restaurant.data);
 });
 
+app.get("/getRestaurantById/:id", async (req: Request, res: Response) => {
+  const restaurant = await axios.get(
+      "http://localhost:3001/getRestaurantById/"+req.params.id
+  );
+  res.json(restaurant.data);
+});
+
+
+app.post("/updateRestaurant", async (req: Request, res: Response) => {
+  const response = await axios.post("http://localhost:3001/updateRestaurant", req.body);
+  res.send(response.data);
+})
+
 app.post("/addOrder", async (req: Request, res: Response) => {
-  console.log(req.body);
   const order = await axios.post(
     "http://localhost:3001/addOrder", req.body
   );
