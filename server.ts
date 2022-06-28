@@ -41,9 +41,20 @@ app.get("/getRestaurantById/:id", async (req: Request, res: Response) => {
   res.json(restaurant.data);
 });
 
-
 app.post("/updateRestaurant", async (req: Request, res: Response) => {
   const response = await axios.post("http://localhost:3001/updateRestaurant", req.body);
+  res.send(response.data);
+})
+
+app.get("/getProductsByRestaurantId/:id", async (req: Request, res: Response) => {
+  const products = await axios.get(
+      "http://localhost:3001/getProductsByRestaurantId/"+req.params.id
+  );
+  res.json(products.data);
+})
+
+app.delete("/deleteCategory/:id", async (req: Request, res: Response) => {
+  const response = await axios.delete("http://localhost:3001/deleteCategory/"+req.params.id);
   res.send(response.data);
 })
 
