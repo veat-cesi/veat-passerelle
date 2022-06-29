@@ -104,6 +104,28 @@ app.post("/deleteCategory", async (req: Request, res: Response) => {
   }
 });
 
+app.post("/updateMeal", async (req: Request, res: Response) => {
+  try {
+    const response = await axios.post(
+        "http://localhost:3001/updateMeal", req.body
+    );
+    res.send(response.data);
+  }catch (e){
+    res.send(e)
+  }
+});
+
+app.post("/deleteMeal", async (req: Request, res: Response) => {
+  try {
+    const response = await axios.post(
+        "http://localhost:3001/deleteMeal", req.body
+    );
+    res.send(response.data);
+  }catch (e){
+    res.send(e)
+  }
+});
+
 app.get("/getProductList/:id", async (req: Request, res: Response) => {
   try {
     const response = await axios.get(
