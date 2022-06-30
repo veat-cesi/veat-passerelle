@@ -47,6 +47,35 @@ io.on('connection', (socket: any) => {
     }
   });
 
+  socket.on('orderAcceptedByDelivery', async function (data: any) {
+    try {
+      const response = await axios.get("http://localhost:3001/orderAcceptedByDelivery", {data});
+      socket.emit('refreshOrders')
+      socket.emit('loadTakePage')
+    }catch (e){
+      console.log(e)
+    }
+  });
+
+  socket.on('orderTookByDelivery', async function (data: any) {
+    try {
+      const response = await axios.get("http://localhost:3001/orderTookByDelivery", {data});
+      socket.emit('loadGivePage')
+    }catch (e){
+      console.log(e)
+    }
+  });
+
+  socket.on('orderGivenByDelivery', async function (data: any) {
+    try {
+      const response = await axios.get("http://localhost:3001/orderGivenByDelivery", {data});
+      socket.emit('loadOrderPage')
+    }catch (e){
+      console.log(e)
+    }
+  });
+
+
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
@@ -212,6 +241,39 @@ app.get("/getAcceptedOrderListByRestaurantId/:id", async (req: Request, res: Res
   }
 });
 
+app.get("/getOrdersToDeliver", async (req: Request, res: Response) =>{
+  try {
+    const response = await axios.get(
+        "http://localhost:3001/getOrdersToDeliver"
+    );
+    res.send(response.data);
+  }catch (e){
+    res.send(e)
+  }
+});
+
+app.get("/getOrdersToDeliverName", async (req: Request, res: Response) =>{
+  try {
+    const response = await axios.get(
+        "http://localhost:3001/getOrdersToDeliverName", req.body
+    );
+    res.send(response.data);
+  }catch (e){
+    res.send(e)
+  }
+});
+
+app.get("/getOrderToTake", async (req: Request, res: Response) =>{
+  try {
+    const response = await axios.get(
+        "http://localhost:3001/getOrderToTake", req.body
+    );
+    res.send(response.data);
+  }catch (e){
+    res.send(e)
+  }
+});
+
 app.post("/addOrder", async (req: Request, res: Response) => {
   const order = await axios.post("http://localhost:3001/addOrder", req.body);
   res.json(order.data);
@@ -226,6 +288,12 @@ app.post("/declineOrder", async (req: Request, res: Response) => {
   const order = await axios.post("http://localhost:3001/orderDeclinedByRestaurant", req.body);
   res.json(order.data);
 });
+
+app.post("/declineOrder", async (req: Request, res: Response) => {
+  const order = await axios.post("http://localhost:3001/orderDeclinedByRestaurant", req.body);
+  res.json(order.data);
+});
+
 
 app.listen(port, () => {
   console.log(`Veat-Passerelle listening on port ${port}`);
