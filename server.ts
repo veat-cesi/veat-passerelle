@@ -104,6 +104,17 @@ app.post("/deleteCategory", async (req: Request, res: Response) => {
   }
 });
 
+app.post("/addMeal", async (req: Request, res: Response) => {
+  try {
+    const response = await axios.post(
+        "http://localhost:3001/addMeal", req.body
+    );
+    res.send(response.data);
+  }catch (e){
+    res.send(e)
+  }
+});
+
 app.post("/updateMeal", async (req: Request, res: Response) => {
   try {
     const response = await axios.post(
