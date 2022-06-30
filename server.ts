@@ -7,10 +7,32 @@ const bodyParser = require("body-parser");
 const app: Application = express();
 const port: number = 3000;
 
-app.options("*", cors({ origin: "*", optionsSuccessStatus: 200 }));
+const http = require('http');
+const server = http.createServer(app);
+const socketio = require('socket.io');
 
+const io = socketio(server, {
+  cors: {
+    origin: '*'
+  }
+});
+
+app.options("*", cors({ origin: "*", optionsSuccessStatus: 200 }));
 app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
 app.use(bodyParser.json());
+
+io.on('connection', (socket: any) => {
+  // listen for incoming data msg on this newly connected socket
+  socket.on('data',function (data: any) {
+    if (data){
+
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
 
 app.get("/getHome", async (req: Request, res: Response) => {
   const allRestaurants = await axios.get(
@@ -166,4 +188,8 @@ app.post("/addOrder", async (req: Request, res: Response) => {
 
 app.listen(port, () => {
   console.log(`Veat-Passerelle listening on port ${port}`);
+});
+
+server.listen(3010, () => {
+  console.log(`RestaurantWS listening on port ${3010}`);
 });
