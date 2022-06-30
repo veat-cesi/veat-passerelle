@@ -22,10 +22,28 @@ app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
 app.use(bodyParser.json());
 
 io.on('connection', (socket: any) => {
-  // listen for incoming data msg on this newly connected socket
-  socket.on('data',function (data: any) {
-    if (data){
 
+  console.log('user connected');
+  // listen for incoming data msg on this newly connected socket
+  socket.on('orderAcceptedByRestaurant', async function (data: any) {
+    try {
+      const response = await axios.get("http://localhost:3001/orderAcceptedByRestaurant", {data});
+      const orders = await axios.get("http://localhost:3000/getOrderListByRestaurantId/" + data.restaurantId);
+      const acceptedOrders = await axios.get("http://localhost:3000/getAcceptedOrderListByRestaurantId/" + data.restaurantId);
+      socket.emit('refreshOrders', {orders: orders.data, acceptedOrders: acceptedOrders.data})
+    }catch (e){
+      console.log(e)
+    }
+  });
+
+  socket.on('orderDeclinedByRestaurant', async function (data: any) {
+    try {
+      const response = await axios.get("http://localhost:3001/orderDeclinedByRestaurant", {data});
+      const orders = await axios.get("http://localhost:3000/getOrderListByRestaurantId/" + data.restaurantId);
+      const acceptedOrders = await axios.get("http://localhost:3000/getAcceptedOrderListByRestaurantId/" + data.restaurantId);
+      socket.emit('refreshOrders', {orders: orders.data, acceptedOrders: acceptedOrders.data})
+    }catch (e){
+      console.log(e)
     }
   });
 
@@ -33,6 +51,8 @@ io.on('connection', (socket: any) => {
     console.log('user disconnected');
   });
 });
+
+
 
 app.get("/getHome", async (req: Request, res: Response) => {
   const allRestaurants = await axios.get(
@@ -181,8 +201,29 @@ app.get("/getOrderListByRestaurantId/:id", async (req: Request, res: Response) =
   }
 });
 
+app.get("/getAcceptedOrderListByRestaurantId/:id", async (req: Request, res: Response) =>{
+  try {
+    const response = await axios.get(
+        "http://localhost:3001/getAcceptedOrderListByRestaurantId/"+ req.params.id
+    );
+    res.send(response.data);
+  }catch (e){
+    res.send(e)
+  }
+});
+
 app.post("/addOrder", async (req: Request, res: Response) => {
   const order = await axios.post("http://localhost:3001/addOrder", req.body);
+  res.json(order.data);
+});
+
+app.post("/acceptOrder", async (req: Request, res: Response) => {
+  const order = await axios.post("http://localhost:3001/orderAcceptedByRestaurant", req.body);
+  res.json(order.data);
+});
+
+app.post("/declineOrder", async (req: Request, res: Response) => {
+  const order = await axios.post("http://localhost:3001/orderDeclinedByRestaurant", req.body);
   res.json(order.data);
 });
 
