@@ -148,6 +148,17 @@ app.get("/getProductList/:id", async (req: Request, res: Response) => {
   }
 });
 
+app.get("/getOrderListByRestaurantId/:id", async (req: Request, res: Response) =>{
+  try {
+    const response = await axios.get(
+        "http://localhost:3001/getOrderListByRestaurantId/"+ req.params.id
+    );
+    res.send(response.data);
+  }catch (e){
+    res.send(e)
+  }
+});
+
 app.post("/addOrder", async (req: Request, res: Response) => {
   const order = await axios.post("http://localhost:3001/addOrder", req.body);
   res.json(order.data);
